@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1e293b;
+  --color-accent: #2563eb;
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
+  --color-bg-main: #f8fafc;
+  --color-border-main: #e2e8f0;
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Georgia', serif;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-main text-text-main font-sans;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply bg-white border border-border-main rounded-xl flex flex-col overflow-hidden;
+  }
+
+  .panel-header {
+    @apply px-5 py-4 border-b border-border-main text-sm font-semibold bg-gray-50 flex justify-between items-center;
+  }
+
+  .btn {
+    @apply px-5 py-2.5 rounded-md text-sm font-semibold cursor-pointer border-none transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-border-main text-text-main hover:bg-gray-50;
+  }
+
+  .btn-primary {
+    @apply bg-accent text-white hover:bg-blue-700;
+  }
+
+  .law-reference {
+    @apply text-accent font-semibold border-b border-dashed border-accent;
+  }
+
+  .legal-card {
+    @apply p-4 m-3 bg-slate-100 rounded-lg border-l-4 border-accent;
+  }
+}
