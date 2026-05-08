@@ -19,9 +19,11 @@ import {
 } from 'lucide-react';
 import { analyzeCreditReport, AnalysisResult } from './services/geminiService';
 import * as pdfjs from 'pdfjs-dist';
+// Import worker matching the installed version
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
+// Configure PDF.js worker using Vite's URL handling
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export default function App() {
   const [reportText, setReportText] = useState('');
@@ -34,10 +36,11 @@ export default function App() {
   const extractTextFromPDF = async (file: File): Promise<string> => {
     try {
       const arrayBuffer = await file.arrayBuffer();
+      // Reset workerSrc just in case or ensure it's set before task
+      pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
+      
       const loadingTask = pdfjs.getDocument({ 
         data: arrayBuffer,
-        useWorkerFetch: false,
-        isEvalSupported: false 
       });
       const pdf = await loadingTask.promise;
       let fullText = '';
@@ -51,9 +54,13 @@ export default function App() {
         fullText += pageText + '\n';
       }
       return fullText;
-    } catch (error) {
+    } catch (error: any) {
       console.error('PDF extraction error:', error);
-      throw new Error('Could not extract text from PDF. It might be an image-only PDF or encrypted.');
+      // More descriptive error message
+      if (error?.message?.includes('worker')) {
+        throw new Error('PDF Worker failed to initialize. Please try pasting the text manually.');
+      }
+      throw new Error('Could not extract text from PDF. It might be an image-only PDF, encrypted, or corrupted.');
     }
   };
 
